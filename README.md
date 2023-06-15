@@ -14,7 +14,15 @@ References:
 - [tomorrow io api reference (for weather data)](https://docs.tomorrow.io/reference/realtime-weather)
 
 
-Example usage:
+## Installing & Running
+with [anaconda](https://www.anaconda.com/):
+```zsh
+conda env create -f environment.yml
+conda activate openai-testing
+python3 main.py
+```
+
+## Example usage:
 ```
 $ python3 main.py 
 Ask AI a question (enter 'q' to quit): hello robot, I am travelling to New York. What is the weather like today?
