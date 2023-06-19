@@ -3,6 +3,8 @@ import openai
 import requests
 import json
 
+from turn_enum import turn_enum
+
 # https://docs.tomorrow.io/reference/realtime-weather
 
 OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
@@ -50,18 +52,18 @@ functions = {
 function_definitions = [v['definition'] for (k, v) in functions.items()]
 
 messages = []
-turn = 'user'
+turn = turn_enum.USER
 function_call = None
 while True:
-    if turn == 'user':
+    if turn == turn_enum.USER:
         user_message = input('Ask AI a question (enter \'q\' to quit): ')
         messages.append({
             "role": "user",
             "content": user_message
         })
         if user_message == 'q': break
-        turn = 'ai'
-    elif turn == 'ai':
+        turn = turn_enum.AI
+    elif turn == turn_enum.AI:
         ai_message = openai.ChatCompletion.create(
             api_key=OPENAI_API_KEY,
             model=models['gpt3'],
@@ -70,13 +72,13 @@ while True:
             function_call='auto',
         )["choices"][0]["message"]
         if ai_message.get('function_call'):
-            turn = 'function_call'
+            turn = turn_enum.LOCAL_MACHINE
             function_call = ai_message["function_call"]
         else:
             print(f'AI: {ai_message.content}')
             turn = 'user'
 
-    elif turn == 'function_call':
+    elif turn == turn_enum.LOCAL_MACHINE:
         function_name = function_call['name']
         function_args = json.loads(function_call['arguments'])
         function_response = functions[function_name]['method'](function_args)
@@ -87,4 +89,4 @@ while True:
         }
         messages.append(function_message)
         function_call = None
-        turn = 'ai'
+        turn = turn_enum.AI
