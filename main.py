@@ -51,18 +51,21 @@ functions = {
 }
 function_definitions = [v['definition'] for (k, v) in functions.items()]
 
-messages = []
-turn = turn_enum.USER
-function_call = None
-while True:
+
+def process_turn_rec(messages: tuple, turn: turn_enum, function_call) -> None:
     if turn == turn_enum.USER:
         user_message = input('Ask AI a question (enter \'q\' to quit): ')
-        messages.append({
-            "role": "user",
-            "content": user_message
-        })
-        if user_message == 'q': break
-        turn = turn_enum.AI
+        if user_message == 'q':
+            return
+        else:
+            return process_turn_rec(
+                messages + ({
+                                "role": "user",
+                                "content": user_message
+                            },),
+                turn_enum.AI,
+                None,
+            )
     elif turn == turn_enum.AI:
         ai_message = openai.ChatCompletion.create(
             api_key=OPENAI_API_KEY,
@@ -71,14 +74,19 @@ while True:
             functions=function_definitions,
             function_call='auto',
         )["choices"][0]["message"]
-        messages.append(ai_message)
         if ai_message.get('function_call'):
-            turn = turn_enum.LOCAL_MACHINE
-            function_call = ai_message["function_call"]
+            return process_turn_rec(
+                messages + (ai_message,),
+                turn_enum.LOCAL_MACHINE,
+                ai_message["function_call"]
+            )
         else:
             print(f'AI: {ai_message.content}')
-            turn = 'user'
-
+            return process_turn_rec(
+                messages + (ai_message,),
+                turn_enum.USER,
+                None
+            )
     elif turn == turn_enum.LOCAL_MACHINE:
         function_name = function_call['name']
         function_args = json.loads(function_call['arguments'])
@@ -88,6 +96,12 @@ while True:
             "name": function_name,
             "content": function_response,
         }
-        messages.append(function_message)
-        function_call = None
-        turn = turn_enum.AI
+        print(f'local machine executed {function_name}')
+        return process_turn_rec(
+            messages + (function_message,),
+            turn_enum.AI,
+            None
+        )
+
+
+process_turn_rec((), turn_enum.USER, None)
