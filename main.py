@@ -1,55 +1,16 @@
-import os
-import openai
-import requests
 import json
+import openai
+import os
 
+from functions import function_definitions, functions
 from turn_enum import turn_enum
 
-# https://docs.tomorrow.io/reference/realtime-weather
-
 OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-TOMORROW_IO_API_KEY = os.environ['TOMORROW_IO_API_KEY']
+
 models = {
     'gpt3': 'gpt-3.5-turbo-0613',
     'gpt4': 'gpt-4-0613',
 }
-
-
-def get_current_weather_for_location(args):
-    lat, lon = float(args.get('latitude')), float(args.get('longitude'))
-    key = TOMORROW_IO_API_KEY
-    tomorrow_api_endpoint = 'https://api.tomorrow.io/v4/weather/realtime'
-
-    response_json = requests.get(
-        f'{tomorrow_api_endpoint}?location={lat},{lon}&fields=temperature&units=imperial&apikey={key}'
-    ).json()
-    # print(response_json)
-    return json.dumps(response_json)
-
-
-functions = {
-    'get_current_weather_for_location': {
-        'method': get_current_weather_for_location,
-        'definition': {
-            'name': 'get_current_weather_for_location',
-            'description': 'get the current weather in a given location',
-            'parameters': {
-                'type': 'object',
-                'properties': {
-                    'latitude': {
-                        'type': 'string',
-                        'description': 'the latitude of the location to check the weather'
-                    },
-                    'longitude': {
-                        'type': 'string',
-                        'description': 'the longitude of the location to check the weather'
-                    },
-                }
-            },
-        }
-    }
-}
-function_definitions = [v['definition'] for (k, v) in functions.items()]
 
 
 def process_turn_rec(messages: tuple, turn: turn_enum, function_call) -> None:
