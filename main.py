@@ -71,6 +71,7 @@ while True:
             functions=function_definitions,
             function_call='auto',
         )["choices"][0]["message"]
+        messages.append(ai_message)
         if ai_message.get('function_call'):
             turn = turn_enum.LOCAL_MACHINE
             function_call = ai_message["function_call"]
