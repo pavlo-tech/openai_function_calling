@@ -34,6 +34,7 @@ def process_turn_rec(messages: tuple, turn: turn_enum, function_call) -> None:
             messages=messages,
             functions=function_definitions,
             function_call='auto',
+            temperature=1.5,
         )["choices"][0]["message"]
         if ai_message.get('function_call'):
             return process_turn_rec(

@@ -18,26 +18,28 @@ def get_current_weather_for_location(args):
     return json.dumps(response_json)
 
 
+get_current_weather_for_location_definition = {
+    'name': 'get_current_weather_for_location',
+    'description': 'get the current weather in a given location',
+    'parameters': {
+        'type': 'object',
+        'properties': {
+            'latitude': {
+                'type': 'string',
+                'description': 'the latitude of the location to check the weather'
+            },
+            'longitude': {
+                'type': 'string',
+                'description': 'the longitude of the location to check the weather'
+            },
+        }
+    },
+}
+
 functions = {
     'get_current_weather_for_location': {
         'method': get_current_weather_for_location,
-        'definition': {
-            'name': 'get_current_weather_for_location',
-            'description': 'get the current weather in a given location',
-            'parameters': {
-                'type': 'object',
-                'properties': {
-                    'latitude': {
-                        'type': 'string',
-                        'description': 'the latitude of the location to check the weather'
-                    },
-                    'longitude': {
-                        'type': 'string',
-                        'description': 'the longitude of the location to check the weather'
-                    },
-                }
-            },
-        }
+        'definition': get_current_weather_for_location_definition,
     }
 }
 function_definitions = [v['definition'] for (k, v) in functions.items()]
