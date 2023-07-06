@@ -1,21 +1,25 @@
-# openai_function_calling 
+# openai_function_calling
 
 just messing around with openai function calling and modifying the openai example
 
 you need the following API keys in your environment variables:
+
 ```
 OPENAI_API_KEY 
 TOMORROW_IO_API_KEY
 ```
 
 References:
+
 - [open ai api reference](https://platform.openai.com/docs/api-reference)
 
 - [tomorrow io api reference (for weather data)](https://docs.tomorrow.io/reference/realtime-weather)
 
-
 ## Installing & Running
+
 with [anaconda](https://www.anaconda.com/):
+// see https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#sharing-an-environment
+
 ```zsh
 conda env create -f environment.yml
 conda activate openai-testing
@@ -23,6 +27,7 @@ python3 main.py
 ```
 
 ## Example usage:
+
 ```
 $ python3 main.py 
 Ask AI a question (enter 'q' to quit): hello robot, I am travelling to New York. What is the weather like today?
